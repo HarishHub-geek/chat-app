@@ -1,5 +1,6 @@
 import { useSocketContext } from "../../context/SocketContext";
 import useConversation from "../../zustand/useConversation";
+import useScreenWidth from '../../zustand/useScreenWidth';
 
 const Conversation = ({ conversation, lastIdx, emoji }) => {
 	const { selectedConversation, setSelectedConversation } = useConversation();
@@ -8,7 +9,35 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
 
 	
 	const { onlineUsers } = useSocketContext();
-	const isOnline = onlineUsers.includes(conversation._id);
+	// const isOnline = onlineUsers.includes(conversation._id);
+	const onlineStatus = onlineUsers.includes(conversation._id) ? "online" : "";
+
+	const { screenWidth } = useScreenWidth();
+
+	let setAvatarWidth = "";
+    let setTextSize = "";
+    let setEmojiSize = "";
+    if (screenWidth < 768 && screenWidth >= 680) {
+        setAvatarWidth = "w-10";
+        setTextSize = "text-md";
+        setEmojiSize = "text-md";
+    } else if (screenWidth < 680 && screenWidth >= 550) {
+        setAvatarWidth = "w-9";
+        setTextSize = "text-sm";
+        setEmojiSize = "text-md";
+    } else if (screenWidth < 550 && screenWidth >= 510) {
+        setAvatarWidth = "w-8";
+        setTextSize = "text-xs";
+        setEmojiSize = "text-sm";
+    } else if (screenWidth < 510) {
+        setAvatarWidth = "w-10";
+        setTextSize = "text-md";
+        setEmojiSize = "text-xl";
+    } else {
+        setAvatarWidth = "w-12";
+        setTextSize = "text-md";
+        setEmojiSize = "text-xl";
+    }
 	
 	return (
 		<>
@@ -18,16 +47,16 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
 			`}
 				onClick={() => setSelectedConversation(conversation)}
 			>
-				<div className={`avatar ${isOnline ? "avatar-online" : ""}`}>
-					<div className='w-12 rounded-full'>
+				<div className={`avatar ${onlineStatus === "online" ? "avatar-online" : ""}`}>
+					<div className={`${setAvatarWidth} rounded-full`}>
 						<img src={conversation.profilePic} alt='user avatar' />
 					</div>
 				</div>
 
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-3 justify-between'>
-						<p className='font-bold text-gray-200'>{conversation.fullName}</p>
-						<span className='text-xl'>{emoji}</span>
+						<p className={`font-bold text-gray-200 ${setTextSize}`}>{conversation.fullName}</p>
+						<span className={`text-xl ${setEmojiSize}`}>{emoji}</span>
 					</div>
 				</div>
 			</div>

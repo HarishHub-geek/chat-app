@@ -1,5 +1,5 @@
-import express from "express";
 import path from "path";
+import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
@@ -27,10 +27,17 @@ app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req,res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+
 //app.get("/", (req,res) => {
   // root route http://localhost:5000/
   //  res.status(200).send( "Be positive")
 //})
+
 
 server.listen(PORT, () => {
     connectToMongoDB();
